@@ -2,7 +2,7 @@ use std::env;
 mod build;
 mod new;
 mod utils;
-use build::{Build, Run};
+use build::Build;
 mod convert;
 use new::New;
 
@@ -41,11 +41,11 @@ fn main() {
     let cmds: Vec<String> = env::args().collect();
     let path = utils::dir();
     match cmds.get(1).map(|s| s.as_str()) {
-        Some("run") | Some("r") => match Run::run(&path.as_path()) {
+        Some("run") | Some("r") => match Build::build(&path.as_path(), "r") {
             Ok(()) => {}
             Err(e) => println!("Err: {e}"),
         },
-        Some("build") | Some("b") => match Build::build(&path.as_path()) {
+        Some("build") | Some("b") => match Build::build(&path.as_path(), "b") {
             Ok(()) => println!("Building OK!"),
             Err(e) => println!("Err: {e}"),
         },
@@ -57,7 +57,7 @@ fn main() {
         Some("-version") | Some("-v") | Some("--version") | Some("--v") => {
             println!("v0.1.0");
         }
-        Some("release") => match Build::release(&path.as_path()) {
+        Some("release") => match Build::build(&path.as_path(), "re") {
             Ok(()) => println!("Release OK!"),
             Err(e) => println!("Err: {e}"),
         },
@@ -86,8 +86,15 @@ fn check(cmds: &[String]) -> Option<&str> {
 mod tests {
     use super::*;
     #[test]
+    fn test_convert_rs() {
+        let text = r#"f main
+    p("Hello World");
+"#;
+        dbg!(crate::convert::Convert_rs::convert_rs(text));
+    }
+    #[test]
     fn test_build() {
-        match Build::build(utils::dir().as_path()) {
+        match Build::build(utils::dir().as_path(), "b") {
             Ok(()) => println!("Building OK!"),
             Err(e) => println!("Err: {e}"),
         };
