@@ -160,6 +160,14 @@ impl<'a> ConvertRs {
                     convert.new_text.push_str("thread::scope(|s| ");
                     continue;
                 }
+                var if var == 'v'
+                    && convert.isfunction
+                    && get_force_str(&copy_vec_text, convert.count + 2) == "ar".to_string() =>
+                {
+                    convert.continue_count = 2;
+                    convert.new_text.push_str("var mut");
+                    continue;
+                }
                 '\n' => {}
                 _ => {}
             }
